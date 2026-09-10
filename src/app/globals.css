@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* Class based dark mode so the theme toggle can switch at runtime */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------
+   Raw palette. Dark is the default; .light overrides below.
+   Only these two blocks should ever hold colour literals.
+   --------------------------------------------------------------- */
+:root,
+.dark {
+  --bg-base: #0a0c0f;
+  --bg-surface: #121519;
+  --bg-surface-2: #191d23;
+  --bg-surface-3: #22272e;
+
+  --line-subtle: #1e232a;
+  --line-strong: #2b323b;
+
+  --ink: #f2f4f7;
+  --ink-muted: #99a1ad;
+  --ink-faint: #626a75;
+
+  --accent: #f0b90b;
+  --accent-hover: #d9a608;
+  --accent-ink: #0a0c0f;
+
+  --up: #16c784;
+  --down: #ea3943;
+}
+
+.light {
+  --bg-base: #ffffff;
+  --bg-surface: #f7f8fa;
+  --bg-surface-2: #eef0f3;
+  --bg-surface-3: #e4e7ec;
+
+  --line-subtle: #e4e7ec;
+  --line-strong: #cdd2d9;
+
+  --ink: #11141a;
+  --ink-muted: #5c646f;
+  --ink-faint: #8b939e;
+
+  --accent: #d9a608;
+  --accent-hover: #c29307;
+  --accent-ink: #ffffff;
+
+  --up: #059669;
+  --down: #dc2626;
+}
+
+/* ---------------------------------------------------------------
+   Tailwind v4 tokens. `inline` keeps them as var() references so
+   they follow the runtime theme instead of being baked at build.
+   These generate bg-*, text-*, border-* WITH opacity support,
+   e.g. bg-accent/10, border-accent/30.
+   --------------------------------------------------------------- */
+@theme inline {
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-surface-2: var(--bg-surface-2);
+  --color-surface-3: var(--bg-surface-3);
+
+  --color-line: var(--line-subtle);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+
+  --color-up: var(--up);
+  --color-down: var(--down);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
+}
+
+/* ---------------------------------------------------------------
+   Base element styles
+   --------------------------------------------------------------- */
+body {
+  background-color: var(--bg-base);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Money and stats line up column to column */
+.tabular-nums,
+[class*="tabular"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------
+   Legacy utilities. Existing pages use bg-primary / text-secondary
+   / border-primary / binance-yellow. Kept so nothing breaks while
+   pages migrate to the tokens above. Do not use in new code.
+   --------------------------------------------------------------- */
+.bg-primary    { background-color: var(--bg-base); }
+.bg-secondary  { background-color: var(--bg-surface); }
+.bg-tertiary   { background-color: var(--bg-surface-2); }
+.text-primary  { color: var(--ink); }
+.text-secondary{ color: var(--ink-muted); }
+.border-primary{ border-color: var(--line-subtle); }
+
+.bg-binance-yellow      { background-color: var(--accent); }
+.bg-binance-yellow-dark { background-color: var(--accent-hover); }
+.text-binance-yellow    { color: var(--accent); }
+.text-binance-yellow-dark { color: var(--accent-hover); }
+.border-binance-yellow  { border-color: var(--accent); }
+
+/* ---------------------------------------------------------------
+   Motion. Calm and short; nothing bounces.
+   --------------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Scrollbars follow the theme instead of the OS */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
