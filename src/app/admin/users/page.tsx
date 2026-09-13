@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <PageHeader title="Users" description="View, search and manage every account" />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Total Users" value={stats.total} icon={UsersIcon} loading={isLoading} />
         <StatCard label="Active" value={stats.active} tone="up" loading={isLoading} />
         <StatCard

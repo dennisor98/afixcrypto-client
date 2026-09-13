@@ -61,8 +61,8 @@ export default function BTCChart({ symbol = 'BTCUSDT', height = 420 }: BTCChartP
     return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
-  const loadCandles = useCallback(async () => {
-    setLoading(true);
+  const loadCandles = useCallback(async (showLoader = false) => {
+    if (showLoader) setLoading(true);
     try {
       const candles: Candle[] = await fetchCandles(symbol, interval, 120);
       setData(candles.map((c) => ({
@@ -80,12 +80,28 @@ export default function BTCChart({ symbol = 'BTCUSDT', height = 420 }: BTCChartP
     }
   }, [symbol, interval]);
 
-  useEffect(() => { loadCandles(); }, [loadCandles]);
+  useEffect(() => {
+    loadCandles(true);
 
-  // Live candle updates
-  useLiveCandle(symbol, interval, (candle) => {
+    // The WebSocket is the primary source. This lightweight sync keeps the
+    // current candle accurate after a temporary socket/network interruption.
+    const refreshTimer = window.setInterval(() => loadCandles(), 15_000);
+    return () => clearInterval(refreshTimer);
+  }, [loadCandles]);
+
+  // Live kline updates are the primary source for the chart.
+  const candleConnected = useLiveCandle(symbol, interval, (candle) => {
     setData((prev) => {
-      if (!prev.length) return prev;
+      if (!prev.length) {
+        return [{
+          time: candle.time,
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+          label: formatLabel(candle.time, interval),
+        }];
+      }
       const updated = [...prev];
       const last = updated[updated.length - 1];
       if (last.time === candle.time) {
@@ -137,6 +153,10 @@ export default function BTCChart({ symbol = 'BTCUSDT', height = 420 }: BTCChartP
               </span>
             </div>
           )}
+          <span
+            title={candleConnected ? 'Connected to Binance live market data' : 'Reconnecting to Binance live market data'}
+            className={`h-2 w-2 rounded-full ${candleConnected ? 'bg-up animate-pulse' : 'bg-ink-faint'}`}
+          />
         </div>
         <div className="flex gap-1">
           {INTERVALS.map((i) => (

@@ -21,14 +21,14 @@ export default function BetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">My Bets</h1>
           <p className="text-secondary mt-1">View and manage your betting history</p>
         </div>
         <Link
           href="/dashboard/bets/create"
-          className="flex items-center px-6 py-3 bg-binance-yellow text-binance-dark rounded-lg hover:bg-binance-yellow-dark transition shadow-lg"
+          className="inline-flex w-full sm:w-auto justify-center items-center px-4 sm:px-6 py-3 bg-binance-yellow text-binance-dark rounded-lg hover:bg-binance-yellow-dark transition shadow-lg"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           Place New Bet
@@ -37,7 +37,7 @@ export default function BetsPage() {
 
       {/* Stats */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-secondary rounded-lg border border-primary p-4 transition-colors animate-pulse">
               <div className="h-12 bg-tertiary rounded"></div>
@@ -45,7 +45,7 @@ export default function BetsPage() {
           ))}
         </div>
       ) : stats ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-secondary rounded-lg border border-primary p-4 transition-colors">
             <p className="text-sm text-secondary">Total Bets</p>
             <p className="text-2xl font-bold text-primary mt-1">{stats.total}</p>
@@ -67,10 +67,10 @@ export default function BetsPage() {
 
       {/* Bets List */}
       <div className="bg-secondary rounded-xl border border-primary transition-colors">
-        <div className="p-6 border-b border-primary">
+        <div className="p-4 sm:p-6 border-b border-primary">
           <h2 className="text-lg font-semibold text-primary">Betting History</h2>
         </div>
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {isLoading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-binance-yellow"></div>

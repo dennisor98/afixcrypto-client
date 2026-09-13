@@ -20,7 +20,7 @@ export default function StatusPage() {
   return (
     <PublicLayout title="System Status" subtitle="Real-time status of afixcrypto services">
       <div className="space-y-8">
-        <div className="bg-gradient-to-br from-[#0ecb81]/15 via-transparent to-transparent border border-[#0ecb81]/30 rounded-2xl p-8 flex items-center gap-4">
+        <div className="bg-gradient-to-br from-[#0ecb81]/15 via-transparent to-transparent border border-[#0ecb81]/30 rounded-2xl p-5 sm:p-8 flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-green-500/20 border border-[#0ecb81]/30 flex items-center justify-center flex-shrink-0">
             <CheckCircleIcon className="h-7 w-7 text-green-400" />
           </div>
@@ -32,7 +32,7 @@ export default function StatusPage() {
 
         <div className="space-y-2">
           {SERVICES.map((s) => (
-            <div key={s.name} className="bg-secondary border border-primary rounded-xl p-4 flex items-center justify-between">
+            <div key={s.name} className="bg-secondary border border-primary rounded-xl p-4 flex flex-wrap items-center justify-between gap-2">
               <span className="text-primary font-medium">{s.name}</span>
               <div className="flex items-center gap-2">
                 <div className="relative">

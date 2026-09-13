@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { walletApi } from '@/lib/api/wallet.api';
 import { DocumentDuplicateIcon, CheckIcon } from '@heroicons/react/24/outline';
+import QRCodeDisplay from '@/components/wallet/QRCodeDisplay';
 
 // Helper to extract a plain string address from whatever the API returns
 function extractAddress(raw: any): string {
@@ -28,7 +29,10 @@ export default function DepositPage() {
   const createAccountMutation = useMutation({
     mutationFn: () => walletApi.createAccount(),
     onSuccess: (response) => {
-      const raw = response.data?.address || response.data?.privateKey;
+      const raw =
+        response.data?.address ??
+        response.data?.data?.address ??
+        response.data?.wallet?.address;
       const newAddress = extractAddress(raw);
       if (newAddress) {
         setAddress(newAddress);
@@ -119,17 +123,7 @@ export default function DepositPage() {
           <div className="bg-tertiary p-6 rounded-lg text-center border border-primary">
             <p className="text-secondary mb-2 font-medium">QR Code</p>
             <div className="bg-secondary p-4 inline-block rounded-lg border border-primary">
-              {address ? (
-                <div className="w-48 h-48 bg-primary flex items-center justify-center rounded border border-primary">
-                  <p className="text-secondary text-xs text-center px-2 break-all">
-                    {address.slice(0, 10)}...{address.slice(-6)}
-                  </p>
-                </div>
-              ) : (
-                <div className="w-48 h-48 bg-primary flex items-center justify-center rounded border border-primary">
-                  <p className="text-secondary text-sm">Generate address first</p>
-                </div>
-              )}
+              <QRCodeDisplay address={address} />
             </div>
             <p className="text-sm text-secondary mt-2">Scan to deposit</p>
           </div>

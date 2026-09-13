@@ -1,5 +1,6 @@
 // Binance public API — no API key required
-const BINANCE_REST = 'https://api.binance.com/api/v3';
+const BINANCE_REST =
+  process.env.NEXT_PUBLIC_BINANCE_REST_URL || 'https://api.binance.com/api/v3';
 
 export type KlineInterval = '1m' | '3m' | '5m' | '15m' | '1h' | '4h' | '1d';
 
@@ -71,4 +72,5 @@ export async function fetchMultipleTickers(
     .map((r) => r.value);
 }
 
-export const BINANCE_WS = 'wss://stream.binance.com:9443/ws';
+export const BINANCE_WS =
+  process.env.NEXT_PUBLIC_BINANCE_WS_URL || 'wss://stream.binance.com:9443/ws';

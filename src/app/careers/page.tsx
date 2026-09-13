@@ -18,7 +18,7 @@ export default function CareersPage() {
             <div className="space-y-8">
 
                 {/* Why work here */}
-                <div className="bg-gradient-to-br from-[#f0b90b]/15 via-transparent to-transparent border border-[#f0b90b]/20 rounded-2xl p-8">
+                <div className="bg-gradient-to-br from-[#f0b90b]/15 via-transparent to-transparent border border-[#f0b90b]/20 rounded-2xl p-5 sm:p-8">
                     <h2 className="text-2xl font-bold text-primary mb-3">
                         Why work at afixcrypto?
                     </h2>
@@ -41,7 +41,7 @@ export default function CareersPage() {
                                 href={`mailto:careers@afixcrypto.com?subject=Application for ${encodeURIComponent(p.title)}`}
                                 className="block bg-secondary border border-primary rounded-2xl p-6 hover:border-[#f0b90b]/30 transition-colors group"
                             >
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-start sm:items-center justify-between gap-3">
                                     <div>
                                         <h3 className="text-primary font-bold text-lg mb-1">
                                             {p.title}

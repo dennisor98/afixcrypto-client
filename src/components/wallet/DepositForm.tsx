@@ -5,6 +5,7 @@ import { usePublicSettings } from '@/hooks/useBackendData';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 import Spinner from '@/components/ui/Spinner';
+import QRCodeDisplay from '@/components/wallet/QRCodeDisplay';
 import {
   DocumentDuplicateIcon,
   CheckIcon,
@@ -98,6 +99,13 @@ export default function DepositForm() {
           </Alert>
         )}
       </div>
+
+      {address && (
+        <div className="flex flex-col items-center rounded-lg border border-line bg-surface-2 p-4">
+          <p className="mb-3 text-sm font-medium text-ink">Scan to deposit</p>
+          <QRCodeDisplay address={address} />
+        </div>
+      )}
 
       <div className="px-3.5 py-3 bg-surface-2 border border-line rounded-lg space-y-1.5 text-sm">
         <div className="flex justify-between">

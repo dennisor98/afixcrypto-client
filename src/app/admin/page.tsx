@@ -159,7 +159,7 @@ export default function AdminDashboard() {
               <ExclamationTriangleIcon className="h-5 w-5 text-ink-faint" />
             }
           />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 sm:p-5">
             {KILL_SWITCHES.map((item) => {
               const raw = Boolean(settings[item.key]);
               // Healthy state is on for the first three, off for maintenance
@@ -200,7 +200,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Primary metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Revenue"
           value={`$${(stats?.totalRevenue ?? 0).toFixed(2)}`}
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Secondary metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Deposits"
           value={stats?.totalDeposits ?? 0}
@@ -367,7 +367,7 @@ export default function AdminDashboard() {
         <h2 className="text-sm font-medium uppercase tracking-wider text-ink-faint mb-3">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {shortcuts.map((action) => {
             const badgeCount = action.showsPending ? pendingCount : 0;
             return (

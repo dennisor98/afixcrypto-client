@@ -93,7 +93,7 @@ export default function ReferralsPage() {
           <div className="p-5 space-y-4">
             <div>
               <p className="text-sm text-ink-muted mb-2">Referral code</p>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="flex-1 h-11 px-3.5 flex items-center bg-surface-2 border border-line rounded-lg">
                   <code className="text-accent font-bold tracking-widest">
                     {referralCode}
@@ -102,7 +102,7 @@ export default function ReferralsPage() {
                 <Button
                   variant="secondary"
                   onClick={() => copy(referralCode, 'code')}
-                  className="shrink-0"
+                  className="shrink-0 justify-center"
                 >
                   {copied === 'code' ? (
                     <CheckIcon className="h-4 w-4 text-up" />
@@ -116,7 +116,7 @@ export default function ReferralsPage() {
 
             <div>
               <p className="text-sm text-ink-muted mb-2">Invite link</p>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="flex-1 h-11 px-3.5 flex items-center bg-surface-2 border border-line rounded-lg min-w-0">
                   <span className="text-ink text-sm truncate font-mono">
                     {referralLink}
@@ -124,7 +124,7 @@ export default function ReferralsPage() {
                 </div>
                 <Button
                   onClick={() => copy(referralLink, 'link')}
-                  className="shrink-0"
+                  className="shrink-0 justify-center"
                 >
                   {copied === 'link' ? (
                     <CheckIcon className="h-4 w-4" />

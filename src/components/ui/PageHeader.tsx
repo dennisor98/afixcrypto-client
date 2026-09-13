@@ -13,7 +13,7 @@ export default function PageHeader({ title, description, action }: PageHeaderPro
           <p className="text-ink-muted text-sm mt-1">{description}</p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="w-full sm:w-auto shrink-0">{action}</div>}
     </div>
   );
 }

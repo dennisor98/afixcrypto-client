@@ -116,7 +116,7 @@ export default function TradeHistoryPage() {
         description="Every trade you have placed, with settlement prices"
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Total Trades"
           value={stats.total}

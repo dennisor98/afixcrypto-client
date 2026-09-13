@@ -85,7 +85,7 @@ export default function Footer() {
     <footer className="bg-base border-t border-line">
       {/* Newsletter */}
       <div className="border-b border-line">
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-ink font-bold text-2xl mb-2">Stay in the loop</h3>
@@ -93,7 +93,7 @@ export default function Footer() {
                 Get the latest market insights, signals analysis, and platform updates delivered to your inbox.
               </p>
             </div>
-            <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); }}>
+            <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => { e.preventDefault(); }}>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -111,12 +111,12 @@ export default function Footer() {
       </div>
 
       {/* Main footer */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="col-span-2">
             <div className="h-12 flex items-center mb-4">
-              <Logo size="lg" />
+              <Logo size="md" />
             </div>
             <p className="text-ink-muted text-sm leading-relaxed mb-6 max-w-sm">
               The fastest way to trade BTC short-term. Real signals, real settlements, real BTC no slippage, no surprises.
@@ -158,11 +158,11 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-line">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className="text-ink-muted text-sm">
             © {year} afixcrypto. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-ink-muted text-xs">
+          <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-ink-muted text-xs">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               All systems operational
@@ -172,7 +172,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="bg-surface border-t border-line py-4">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <p className="text-ink-muted text-xs leading-relaxed text-center">
               <strong className="text-ink">Risk Disclosure:</strong> Trading cryptocurrency involves significant risk and may not be suitable for all investors. Past performance is not indicative of future results. Only trade with funds you can afford to lose. afixcrypto is not a financial advisor. Please conduct your own research before placing trades.
             </p>
