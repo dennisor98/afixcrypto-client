@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { betsApi } from '@/lib/api/bets.api';
@@ -20,6 +20,14 @@ type Period = (typeof PERIODS)[number];
 type Direction = 'rise' | 'fall';
 
 const QUICK_AMOUNTS = [10, 25, 50, 100];
+
+function getTimestamp(value: string): number {
+  const numericValue = Number(value);
+  if (Number.isFinite(numericValue)) {
+    return numericValue < 1e12 ? numericValue * 1000 : numericValue;
+  }
+  return new Date(value).getTime();
+}
 
 export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void }) {
   const router = useRouter();
@@ -56,6 +64,30 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
     () => (trades ?? []).some((t) => t.status === 'pending'),
     [trades],
   );
+  const openTrade = useMemo(
+    () => (trades ?? []).find((t) => t.status === 'pending'),
+    [trades],
+  );
+  const openTradeCreatedAt = openTrade?.createdAt;
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!openTradeCreatedAt) {
+      setElapsedSeconds(0);
+      return;
+    }
+
+    const placedAt = getTimestamp(openTradeCreatedAt);
+    const updateElapsed = () => {
+      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - placedAt) / 1000)));
+    };
+
+    updateElapsed();
+    const interval = window.setInterval(updateElapsed, 1000);
+    return () => window.clearInterval(interval);
+  }, [openTradeCreatedAt]);
+
+  const elapsedLabel = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`;
 
   const validation = useMemo(() => {
     if (!amount) return null;
@@ -119,7 +151,10 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
 
       {!tradingBlocked && hasOpenTrade && (
         <Notice tone="accent" icon={ExclamationTriangleIcon} title="Trade in progress">
-          Wait for your current trade to settle before placing another.
+          <span className="flex items-center justify-between gap-3">
+            <span>Wait for your current trade to settle before placing another.</span>
+            <span className="shrink-0 font-semibold tabular-nums">Elapsed {elapsedLabel}</span>
+          </span>
         </Notice>
       )}
 
