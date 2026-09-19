@@ -34,6 +34,7 @@ const SWITCHES: SwitchDef[] = [
 
 const TRADING_FIELDS = [
   { key: 'payoutMultiplier', label: 'Payout multiplier', hint: '1.95 returns 95% profit', step: '0.01' },
+  { key: 'dailyTradeReturnRate', label: '24-hour trade return', hint: 'ROI percent, 0-100', step: '0.01' },
   { key: 'minBet', label: 'Minimum trade', hint: 'USDT', step: '0.01' },
   { key: 'maxBet', label: 'Maximum trade', hint: 'USDT', step: '1' },
 ];

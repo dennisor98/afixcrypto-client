@@ -15,9 +15,10 @@ import {
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 
-const PERIODS = ['5m', '15m', '30m'] as const;
+const PERIODS = ['5m', '15m', '30m', '24h'] as const;
 type Period = (typeof PERIODS)[number];
 type Direction = 'rise' | 'fall';
+type TradingTab = 'short-term' | 'roi';
 
 const QUICK_AMOUNTS = [10, 25, 50, 100];
 
@@ -40,6 +41,7 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
   const [amount, setAmount] = useState('');
   const [direction, setDirection] = useState<Direction>('rise');
   const [period, setPeriod] = useState<Period>('5m');
+  const [tradingTab, setTradingTab] = useState<TradingTab>('short-term');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -50,6 +52,8 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
   const minBet = Number(settings?.minBet ?? 1);
   const maxBet = Number(settings?.maxBet ?? 0);
   const payout = Number(settings?.payoutMultiplier ?? 1.95);
+  const dailyReturnRate = Number(settings?.dailyTradeReturnRate ?? 5);
+  const isTwentyFourHourTrade = period === '24h';
   const returnPct = ((payout - 1) * 100).toFixed(0);
 
   const tradingBlocked = Boolean(
@@ -188,26 +192,58 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
       </div>
 
       <div>
-        <p className="text-sm text-ink-muted mb-2">Period</p>
-        <div className="grid grid-cols-3 gap-2">
-          {PERIODS.map((p) => (
+        <p className="text-sm text-ink-muted mb-2">Trade window</p>
+        <div className="grid grid-cols-2 gap-2 mb-2">
+          {([
+            { id: 'short-term', label: 'Short-term' },
+            { id: 'roi', label: `ROI 24hr trade (~${dailyReturnRate.toFixed(1)}%)` },
+          ] as const).map((tab) => (
             <button
-              key={p}
+              key={tab.id}
               type="button"
               disabled={disabled}
-              onClick={() => setPeriod(p)}
+              onClick={() => {
+                setTradingTab(tab.id);
+                setPeriod(tab.id === 'roi' ? '24h' : '5m');
+              }}
               className={cn(
                 'h-10 rounded-lg border text-sm font-medium transition-colors',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
-                period === p
+                tradingTab === tab.id
                   ? 'bg-accent text-accent-ink border-accent'
                   : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong',
               )}
             >
-              {p}
+              {tab.label}
             </button>
           ))}
         </div>
+        {tradingTab === 'short-term' && (
+          <div className="grid grid-cols-3 gap-2">
+            {PERIODS.slice(0, 3).map((p) => (
+              <button
+                key={p}
+                type="button"
+                disabled={disabled}
+                onClick={() => setPeriod(p)}
+                className={cn(
+                  'h-10 rounded-lg border text-sm font-medium transition-colors',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  period === p
+                    ? 'bg-accent text-accent-ink border-accent'
+                    : 'bg-surface-2 text-ink-muted border-line hover:border-line-strong',
+                )}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+        {tradingTab === 'roi' && (
+          <div className="px-3.5 py-2.5 rounded-lg border border-accent/30 bg-accent/5 text-sm text-ink-muted">
+            ROI 24hr trade at approximately {dailyReturnRate.toFixed(1)}% fixed return.
+          </div>
+        )}
       </div>
 
       <div>
@@ -260,17 +296,27 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
       {amountNum > 0 && !validation && (
         <div className="px-3.5 py-3 bg-surface-2 border border-line rounded-lg space-y-1.5 text-sm">
           <div className="flex justify-between">
-            <span className="text-ink-muted">If correct (+{returnPct}%)</span>
+            <span className="text-ink-muted">
+              {isTwentyFourHourTrade
+                ? `Fixed return (+${dailyReturnRate.toFixed(2)}%)`
+                : `If correct (+${returnPct}%)`}
+            </span>
             <span className="text-up font-bold tabular-nums">
-              +${(amountNum * payout - amountNum).toFixed(2)}
+              +${(
+                isTwentyFourHourTrade
+                  ? amountNum * (dailyReturnRate / 100)
+                  : amountNum * payout - amountNum
+              ).toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-ink-muted">If wrong</span>
-            <span className="text-down font-bold tabular-nums">
-              -${amountNum.toFixed(2)}
-            </span>
-          </div>
+          {!isTwentyFourHourTrade && (
+            <div className="flex justify-between">
+              <span className="text-ink-muted">If wrong</span>
+              <span className="text-down font-bold tabular-nums">
+                -${amountNum.toFixed(2)}
+              </span>
+            </div>
+          )}
         </div>
       )}
 

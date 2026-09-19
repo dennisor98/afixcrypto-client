@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils/cn';
 import {
   Squares2X2Icon,
   BoltIcon,
+  CpuChipIcon,
   ClipboardDocumentListIcon,
   WalletIcon,
   UserGroupIcon,
@@ -27,6 +28,7 @@ import {
 const NAV = [
   { label: 'Dashboard', href: '/dashboard', icon: Squares2X2Icon, group: 'main' },
   { label: 'Trade', href: '/dashboard/trade', icon: BoltIcon, group: 'main' },
+  { label: 'Trading Bots', href: '/dashboard/bots', icon: CpuChipIcon, group: 'main' },
   { label: 'Trade History', href: '/dashboard/trade-history', icon: ClipboardDocumentListIcon, group: 'main' },
   { label: 'Wallet', href: '/dashboard/wallet', icon: WalletIcon, group: 'account' },
   { label: 'Referrals', href: '/dashboard/referrals', icon: UserGroupIcon, group: 'account' },
