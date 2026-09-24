@@ -7,7 +7,7 @@ const COOKIE_NAME = 'auth_token';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days, matches refresh token
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: '/backend-api',
     withCredentials: true, // CRITICAL — send cookies
 });
 
@@ -15,17 +15,7 @@ const api = axios.create({
 let rateLimitedUntil = 0;
 
 // === Refresh token coordination ===
-let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
-
-function subscribeTokenRefresh(cb: (token: string) => void) {
-    refreshSubscribers.push(cb);
-}
-
-function onRefreshed(newToken: string) {
-    refreshSubscribers.forEach((cb) => cb(newToken));
-    refreshSubscribers = [];
-}
+let refreshPromise: Promise<string> | null = null;
 
 function clearAuthState() {
     localStorage.removeItem('token');
@@ -41,10 +31,39 @@ api.interceptors.request.use((config) => {
         return Promise.reject(new Error('Cooling down from rate limit'));
     }
 
+    const isRefreshRequest = config.url?.includes('/user/refresh');
     const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (isRefreshRequest) {
+        // The refresh token is an httpOnly cookie. Sending the expired access
+        // token as well can make the backend reject the refresh request first.
+        delete config.headers.Authorization;
+    } else if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 });
+
+function refreshAccessToken(): Promise<string> {
+    if (!refreshPromise) {
+        refreshPromise = api
+            .post('/user/refresh')
+            .then(({ data }) => {
+                if (!data?.token) throw new Error('Refresh response did not include an access token');
+
+                localStorage.setItem('token', data.token);
+                if (data.id) localStorage.setItem('user', JSON.stringify(data));
+                document.cookie =
+                    `${COOKIE_NAME}=${data.token}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Strict`;
+
+                return data.token as string;
+            })
+            .finally(() => {
+                refreshPromise = null;
+            });
+    }
+
+    return refreshPromise;
+}
 
 // === Response interceptor ===
 // Auto-refresh on 401, track rate limits on 429
@@ -72,37 +91,13 @@ api.interceptors.response.use(
             !isRefreshEndpoint &&
             !isAuthEndpoint
         ) {
-            if (isRefreshing) {
-                // Another refresh is already in progress — wait for it
-                return new Promise((resolve) => {
-                    subscribeTokenRefresh((token: string) => {
-                        originalRequest.headers.Authorization = `Bearer ${token}`;
-                        resolve(api(originalRequest));
-                    });
-                });
-            }
-
             originalRequest._retry = true;
-            isRefreshing = true;
 
             try {
-                const { data } = await api.post('/user/refresh');
-                localStorage.setItem('token', data.token);
-
-                // Update user in localStorage if returned
-                if (data.id) localStorage.setItem('user', JSON.stringify(data));
-
-                document.cookie =
-                    `${COOKIE_NAME}=${data.token}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Strict`;
-
-                isRefreshing = false;
-                onRefreshed(data.token);
-
-                originalRequest.headers.Authorization = `Bearer ${data.token}`;
+                const token = await refreshAccessToken();
+                originalRequest.headers.Authorization = `Bearer ${token}`;
                 return api(originalRequest);
             } catch (refreshError) {
-                isRefreshing = false;
-
                 // Refresh failed — clear auth state and redirect to login
                 clearAuthState();
 

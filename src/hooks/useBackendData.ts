@@ -61,6 +61,32 @@ function normalizeWallet(raw: any): Wallet {
   };
 }
 
+function normalizeTrade(raw: any): Bet {
+  const createdAt =
+    raw.createdAt ??
+    raw.created_at ??
+    raw.bet_createdAt ??
+    raw.b_createdAt ??
+    raw.placedAt ??
+    raw.timestamp;
+
+  return {
+    ...raw,
+    id: raw.id ?? raw.bet_id,
+    status: String(raw.status ?? '').toLowerCase() as Bet['status'],
+    projectedstatus: String(raw.projectedstatus ?? raw.projected_status ?? '').toLowerCase() as Bet['projectedstatus'],
+    createdAt,
+  };
+}
+
+function getTradeRows(data: any): any[] {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.trades)) return data.trades;
+  if (Array.isArray(data?.results)) return data.results;
+  return [];
+}
+
 // Today's trading signals from backend
 export function useTodaySignals() {
   return useQuery<Signal[]>({
@@ -81,7 +107,7 @@ export function useUserTrades() {
     queryKey: ['userTrades'],
     queryFn: async () => {
       const res = await api.get('/trades/get/user/trades');
-      return Array.isArray(res.data) ? res.data : [];
+      return getTradeRows(res.data).map(normalizeTrade);
     },
     refetchInterval: 15_000,
     staleTime: 10_000,

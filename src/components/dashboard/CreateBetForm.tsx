@@ -22,12 +22,13 @@ type TradingTab = 'short-term' | 'roi';
 
 const QUICK_AMOUNTS = [10, 25, 50, 100];
 
-function getTimestamp(value: string): number {
+function getTimestamp(value: string | number): number {
   const numericValue = Number(value);
   if (Number.isFinite(numericValue)) {
     return numericValue < 1e12 ? numericValue * 1000 : numericValue;
   }
-  return new Date(value).getTime();
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : Date.now();
 }
 
 export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void }) {
@@ -81,7 +82,8 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
       return;
     }
 
-    const placedAt = getTimestamp(openTradeCreatedAt);
+    const parsedPlacedAt = getTimestamp(openTradeCreatedAt);
+    const placedAt = Math.min(parsedPlacedAt, Date.now());
     const updateElapsed = () => {
       setElapsedSeconds(Math.max(0, Math.floor((Date.now() - placedAt) / 1000)));
     };
