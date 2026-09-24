@@ -20,6 +20,7 @@ export interface Bet {
   betAmount: string;
   betType: 'rise' | 'fall';
   isVirtual: boolean;
+  isBotTrade: boolean;
   status: 'won' | 'loss' | 'pending';
   projectedstatus: 'won' | 'loss' | 'pending';
   startPrice?: string | null;
@@ -62,6 +63,23 @@ function normalizeWallet(raw: any): Wallet {
 }
 
 function normalizeTrade(raw: any): Bet {
+  const source = String(raw.source ?? raw.tradeSource ?? raw.origin ?? '').toLowerCase();
+  const isBotTrade = Boolean(
+    raw.isBot === true ||
+    raw.isBotTrade === true ||
+    raw.botId ||
+    raw.bot_id ||
+    raw.tradingBotId ||
+    raw.trading_bot_id ||
+    raw.botSubscriptionId ||
+    raw.bot_subscription_id ||
+    raw.bot ||
+    raw.botSubscription ||
+    raw.bot_subscription ||
+    source === 'bot' ||
+    source === 'automated' ||
+    source === 'trading-bot',
+  );
   const createdAt =
     raw.createdAt ??
     raw.created_at ??
@@ -73,6 +91,7 @@ function normalizeTrade(raw: any): Bet {
   return {
     ...raw,
     id: raw.id ?? raw.bet_id,
+    isBotTrade,
     status: String(raw.status ?? '').toLowerCase() as Bet['status'],
     projectedstatus: String(raw.projectedstatus ?? raw.projected_status ?? '').toLowerCase() as Bet['projectedstatus'],
     createdAt,

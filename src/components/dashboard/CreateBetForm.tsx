@@ -66,11 +66,11 @@ export default function CreateBetForm({ onSuccess }: { onSuccess?: () => void })
 
   // The backend allows one open trade at a time, so mirror that here
   const hasOpenTrade = useMemo(
-    () => (trades ?? []).some((t) => t.status === 'pending'),
+    () => (trades ?? []).some((t) => t.status === 'pending' && !t.isBotTrade),
     [trades],
   );
   const openTrade = useMemo(
-    () => (trades ?? []).find((t) => t.status === 'pending'),
+    () => (trades ?? []).find((t) => t.status === 'pending' && !t.isBotTrade),
     [trades],
   );
   const openTradeCreatedAt = openTrade?.createdAt;
